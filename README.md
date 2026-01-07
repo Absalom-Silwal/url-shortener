@@ -23,23 +23,23 @@ Assumptions
 - 3 years of expiry time.
 
 QPS(Query per Second)
-Average writes per sec = 50 million * 5 / (24 * 60 * 60) = 250 million / 86400 = 2,893 writes/sec
-Average reads per sec = 250 million * 100 / (24 * 60 * 60) ~ ≈ 289,351 reads/sec
+- Average writes per sec = 50 million * 5 / (24 * 60 * 60) = 250 million / 86400 = 2,893 writes/sec
+- Average reads per sec = 250 million * 100 / (24 * 60 * 60) ~ ≈ 289,351 reads/sec
 
 Peak QPS
-Assume 5X would be the peak
-Peak Write QPS  = 2,893 × 5 ≈ 14,500 writes/sec
-Peak Read QPS = 289,351 × 5 ≈ 1.45 million reads/sec
+- Assume 5X would be the peak
+- Peak Write QPS  = 2,893 × 5 ≈ 14,500 writes/sec
+- Peak Read QPS = 289,351 × 5 ≈ 1.45 million reads/sec
 
 Storage
-Total writes for 3 years = 250 M * 365 * 3  = 273.75 billion URLs
-Total Storage = 273.75 billion URLs * 500 bytes ≈ 136.9 TB
+- Total writes for 3 years = 250 M * 365 * 3  = 273.75 billion URLs 
+- Total Storage = 273.75 billion URLs * 500 bytes ≈ 136.9 TB
 
 Cache
-Let's assume caching 0.1% hot URLs
-hot URLs = 273.75B × 0.1% = 273M URLs
-Cache Size = 273M * 500 bytes ≈ 109 GB
-Final Redis cache : 120-150 GB
+- Let's assume caching 0.1% hot URLs
+- hot URLs = 273.75B × 0.1% = 273M URLs
+- Cache Size = 273M * 500 bytes ≈ 109 GB
+- Final Redis cache : 120-150 GB
 
 
 
