@@ -45,7 +45,8 @@ Cache
 
 # High-level architecture diagram
 
-user -> load balancer -> cache -> web servers -> master-slave database
+<img src="./assets/images/high_level_architecture.png" alt="Example image" width="300" height="200">
+
 
 # API design
 # Scalability & trade-offs
