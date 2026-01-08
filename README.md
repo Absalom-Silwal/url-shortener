@@ -45,10 +45,34 @@ Cache
 
 # High-level architecture diagram
 
-<img src="./assets/images/high_level_architecture.png" alt="Example image" width="300" height="200">
+<img src="./assets/images/high_level_architecture.png" alt="Example image" width="450" height="200">
 
 
 # API design
+1. POST /shorten Create Short URL
+
+- Request Body<br>
+{<br>
+  "long_url": "https://www.example.com/long-path",<br>
+}
+
+- Response Body <br>
+{<br>
+  "short_url": "https://api.short.com/{short_code}",<br>
+  "short_code": {short_code},<br>
+  "expire_at": "2029-01-01T00:00:00Z"<br>
+}<br>
+
+
+2. GET /{short_url} Redirect Short URL
+
+- Response <br>
+
+HTTP/1.1 302 Found<br>
+Location: https://www.example.com/long-path <br>
+Cache-Control: no-cache <br>
+
+
 # Scalability & trade-offs
 # Failure handling
 # Future improvements
