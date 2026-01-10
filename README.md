@@ -73,6 +73,12 @@ Location: https://www.example.com/long-path <br>
 Cache-Control: no-cache <br>
 
 
-# Scalability & trade-offs
+# Trade-offs
+ID Generation Strategy
+Database Choosing Strategy
+Programming langugage Choosing Strategy
+Caching Strategy
+
+
 # Failure handling
 # Future improvements
