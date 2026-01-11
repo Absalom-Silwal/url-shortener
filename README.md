@@ -108,4 +108,9 @@ A multi-layer caching strategy using a CDN and Redis was chosen to optimize the 
 
 
 # Failure handling
+- Cache Failures
+- Database Failures
+- Application Server Failures
+- Load Balancer Failures
+
 # Future improvements
