@@ -74,10 +74,37 @@ Cache-Control: no-cache <br>
 
 
 # Trade-offs
-ID Generation Strategy
-Database Choosing Strategy
-Programming langugage Choosing Strategy
-Caching Strategy
+
+- Programming language Choice
+
+Node.js was selected as the backend language for the URL shortener because its event-driven, non-blocking I/O architecture aligns strongly with the system’s functional and non-functional requirements. The application is highly read-heavy and I/O-bound, requiring low-latency redirects and the ability to handle a very large number of concurrent requests efficiently. Node.js enables fast redirect handling, scalable REST API development, and stateless service design that supports horizontal scaling behind a load balancer. From a non-functional perspective, it offers strong scalability, efficient resource utilization, high availability. While Node.js is not ideal for CPU-intensive workloads, this limitation is acceptable for a URL shortener, as heavy processing tasks can be handled asynchronously, making Node.js a well-balanced and scalable choice for this system.
+
+- Database Choice
+
+MongoDB was chosen as the primary database because it aligns well with the URL shortener’s functional and non-functional requirements. The system relies on simple key-based access patterns, high read throughput, and long-lived data with automatic expiry, all of which are well supported by MongoDB’s document model and TTL indexes.<br> Its native sharding and replica set capabilities enable horizontal scalability and high availability without introducing excessive operational complexity. While MongoDB trades strong consistency and complex relational queries for flexibility and ease of scaling, these trade-offs are acceptable for a read-heavy, low-latency URL shortener, making MongoDB a practical and scalable database choice.
+
+- ID Generation Strategy
+
+- Auto Increment ID
+It is highly predictable so it's not choosen
+
+- UUID<br>
+It is guranteed to be unique. But Due to it's long length, it isnot choosen
+
+- Random Base62 String <br>
+This strategy has collision probability at scale. This requires continues checking the database and retries
+
+- Snowflake-Style Distributed IDs <br>
+Each service instances generates IDs independently.When Encoded using Base62 produces short .Guranteed Uniqueness and no retries
+
+ID Structure <br>
+| Timestamp | Machine ID | Sequence |
+
+
+
+- Caching Strategy
+
+A multi-layer caching strategy using a CDN and Redis was chosen to optimize the read-heavy nature of the URL shortener. Redirect responses are cached at the CDN for ultra-low latency global access, while Redis serves as the primary application-level cache for short-to-long URL mappings. A cache-aside approach with TTL-based eviction ensures efficient memory usage and automatic cleanup aligned with URL expiry. Although this design introduces cache consistency and memory management trade-offs, it significantly reduces database load, improves scalability, and ensures fast and reliable redirects under high traffic.
 
 
 # Failure handling
