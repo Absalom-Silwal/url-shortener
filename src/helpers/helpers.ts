@@ -41,3 +41,9 @@ export const Base62 = (uId:bigint)=>{
     }
     return new_encoded_str;
 }
+
+export const ttlCalculation = (createdAt:Date,ttlYear=3)=>{
+    const result = new Date(createdAt); 
+    result.setFullYear(createdAt.getFullYear() + ttlYear); 
+    return result;
+} 
