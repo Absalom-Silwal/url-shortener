@@ -42,11 +42,11 @@ export const shortUrl = async (req:Request, res:Response) => {
   }
 };
 
-export const getUrlById = async (req:Request, res:Response) => {
+export const redirectUrl = async (req:Request, res:Response) => {
   try {
-    const url = await Url.find({short_code:req.params.id});
+    const url = await Url.findOne({short_code:req.params.code});
     if (!url) return res.status(404).json({ message: "Url not found" });
-    res.status(200).json(url);
+    res.redirect(302,url.long_url)
   } catch (error:unknown) {
     if (error instanceof Error){
       res.status(400).json({ error: error.message });

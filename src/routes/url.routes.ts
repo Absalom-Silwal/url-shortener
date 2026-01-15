@@ -1,10 +1,10 @@
 import express from "express";
-import { shortUrl,getUrlById,deleteUrl } from "../controllers/url.controller.ts";
+import { shortUrl,redirectUrl,deleteUrl } from "../controllers/url.controller.ts";
 
 const router = express.Router();
 
 router.post("/shorten", shortUrl);
-router.get("/:id", getUrlById);
+router.get("/:code", redirectUrl);
 router.delete("/:id", deleteUrl);
 
 export default router;
