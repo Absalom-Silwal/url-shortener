@@ -2,6 +2,7 @@ import Url from "../models/url.model.ts";
 import bs58 from "bs58";
 import {Request,Response} from "express"
 import { createSnowflake,Base62,ttlCalculation } from "../helpers/helpers.ts";
+import { readData,writeData } from "../helpers/redis.ts";
 
 // shorten Url
 export const shortUrl = async (req:Request, res:Response) => {
@@ -44,9 +45,17 @@ export const shortUrl = async (req:Request, res:Response) => {
 
 export const redirectUrl = async (req:Request, res:Response) => {
   try {
-    const url = await Url.findOne({short_code:req.params.code});
-    if (!url) return res.status(404).json({ message: "Url not found" });
-    res.redirect(302,url.long_url)
+    const reqCode = req.params.code;
+    const shortCode = Array.isArray(reqCode)?reqCode[0]:reqCode;
+    let cachedUrl = await readData(shortCode);
+    if(!cachedUrl){
+      const url = await Url.findOne({short_code:req.params.code});
+      if (!url) return res.status(404).json({ message: "Url not found" });
+      await writeData(shortCode,url.long_url)
+      cachedUrl = url.long_url
+    }
+    
+    res.redirect(302,cachedUrl)
   } catch (error:unknown) {
     if (error instanceof Error){
       res.status(400).json({ error: error.message });
