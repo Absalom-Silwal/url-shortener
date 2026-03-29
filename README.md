@@ -58,6 +58,7 @@ Cache
 
 - Response Body <br>
 {<br>
+  "url":"https://longUrl",<br>
   "short_url": "https://api.short.com/{short_code}",<br>
   "short_code": {short_code},<br>
   "expire_at": "2029-01-01T00:00:00Z"<br>

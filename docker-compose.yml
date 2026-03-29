@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerfile-backend
     container_name: url-shortner
     ports:
       - "5000:5000"
@@ -11,8 +13,22 @@ services:
       - MONGO_URI=mongodb://mongo:27017/url-shortner
     depends_on:
       - mongo
+      - redis
     volumes:
       - .:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
       - /app/node_modules
 
   mongo:
@@ -22,6 +38,11 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+  
+  redis:
+    image: redis:alpine
+    ports: 
+      - "6379:6379"
 
 volumes:
   mongo-data:
