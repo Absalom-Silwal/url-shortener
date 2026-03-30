@@ -17,20 +17,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-
+      
   mongo:
     image: mongo:7.0
     container_name: mongodb
