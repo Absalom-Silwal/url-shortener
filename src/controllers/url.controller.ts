@@ -8,7 +8,7 @@ import { readData,writeData } from "../helpers/redis.ts";
 export const shortUrl = async (req:Request, res:Response) => {
   try {
     const {url} = req.body;
-
+    console.log(url)
     //first seach if the url exists or not in the database
     const urlExists = await Url.findOne({long_url:url});
     if(urlExists){
