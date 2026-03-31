@@ -2,7 +2,7 @@ import Url from "../models/url.model.ts";
 import bs58 from "bs58";
 import { createClient } from "redis";
 import {Request,Response} from "express"
-import { createSnowflake,Base62,ttlCalculation } from "../helpers/helpers.ts";
+import { createSnowflake,Base62,ttlCalculation,strToDate } from "../helpers/helpers.ts";
 import { readFromCache,writeToCache } from "../helpers/redis.ts";
 
 
@@ -14,11 +14,12 @@ export const shortUrl = async (req:Request, res:Response) => {
     const cached = await readFromCache(`long:${longUrl}`);
     if (cached) {
       const short_code_cached = await readFromCache(`short:${cached.short_code}`)
+      console.log('short_code_cached',short_code_cached)
       return res.status(200).json({
         long_url: longUrl,
         short_url: `https://api.shortly.com/${cached.short_code}`,
         short_code: cached.short_code,
-        expired_at: ttlCalculation(cached.createdAt),
+        expired_at: ttlCalculation(strToDate(short_code_cached.createdAt)),
         count : short_code_cached.count || 0
       });
     }
@@ -37,7 +38,7 @@ export const shortUrl = async (req:Request, res:Response) => {
       await writeToCache(`short:${urlExists.short_code}`, JSON.stringify({
         long_url: longUrl,
         short_code: urlExists.short_code,
-        createdAt: urlExists.createdAt,
+        createdAt: urlExists.created_at,
         count: 0
       }));
 
@@ -46,7 +47,8 @@ export const shortUrl = async (req:Request, res:Response) => {
         long_url:longUrl,
         short_url:`https//api.shortly.com/${urlExists.short_code}`,
         short_code:urlExists.short_code,
-        expired_at:ttlCalculation(urlExists.created_at)
+        expired_at:ttlCalculation(urlExists.created_at),
+        count: 0
       });
     }
 
@@ -114,12 +116,13 @@ export const redirectUrl = async (req:Request, res:Response) => {
         JSON.stringify({
           long_url: cachedUrl.long_url,
           short_code: shortCode,
-          createdAt: cachedUrl.created_at,
+          createdAt: cachedUrl.createdAt,
           count : (cachedUrl.count || 0) + 1
         })
       )
     
-    res.redirect(301,shortCachedUrl.long_url)
+    //res.redirect(301,shortCachedUrl.long_url)
+    res.status(200).json({'msg':'redirected sucessfully'});
   } catch (error:unknown) {
     if (error instanceof Error){
       res.status(400).json({ error: error.message });

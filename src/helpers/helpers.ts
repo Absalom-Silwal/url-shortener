@@ -47,3 +47,7 @@ export const ttlCalculation = (createdAt:Date,ttlYear=3)=>{
     result.setFullYear(createdAt.getFullYear() + ttlYear); 
     return result;
 } 
+
+export const strToDate = (date:string)=>{
+  return new Date(date);
+}
