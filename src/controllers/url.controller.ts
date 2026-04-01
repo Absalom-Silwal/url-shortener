@@ -1,9 +1,9 @@
-import Url from "../models/url.model.ts";
+import Url from "../models/url.model";
 import bs58 from "bs58";
 import { createClient } from "redis";
 import {Request,Response} from "express"
-import { createSnowflake,Base62,ttlCalculation,strToDate } from "../helpers/helpers.ts";
-import { readFromCache,writeToCache } from "../helpers/redis.ts";
+import { createSnowflake,Base62,ttlCalculation,strToDate } from "../helpers/helpers";
+import { readFromCache,writeToCache } from "../helpers/redis";
 
 
 // shorten Url

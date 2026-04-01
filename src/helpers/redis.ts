@@ -1,4 +1,4 @@
-import redisClient  from "../config/redis.ts";
+import redisClient  from "../config/redis";
 
 export async function readFromCache(value:string) {
     try {

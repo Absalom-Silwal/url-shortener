@@ -4,7 +4,8 @@ services:
   backend:
     build:
       context: .
-      dockerfile: dockerfile-backend
+      dockerfile: dockerfile
+    image: ghcr.io/absalom-silwal/app.shortly
     container_name: url-shortner
     ports:
       - "5000:5000"
