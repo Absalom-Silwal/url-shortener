@@ -2,7 +2,7 @@ import Url from "../models/url.model";
 import bs58 from "bs58";
 import { createClient } from "redis";
 import {Request,Response} from "express"
-import { createSnowflake,Base62,ttlCalculation,strToDate } from "../helpers/helpers";
+import { createSnowflake,Base62,ttlCalculation,strToDate,getBaseUrl,getShorUrl } from "../helpers/helpers";
 import { readFromCache,writeToCache } from "../helpers/redis";
 
 
@@ -10,14 +10,15 @@ import { readFromCache,writeToCache } from "../helpers/redis";
 export const shortUrl = async (req:Request, res:Response) => {
   try {
     const {longUrl} = req.body;
+    const baseUrl = getBaseUrl(req);
     //first checking long url exists or not on redis
     const cached = await readFromCache(`long:${longUrl}`);
     if (cached) {
       const short_code_cached = await readFromCache(`short:${cached.short_code}`)
-      console.log('short_code_cached',short_code_cached)
+      //console.log('short_code_cached',short_code_cached)
       return res.status(200).json({
         long_url: longUrl,
-        short_url: `https://api.shortly.com/${cached.short_code}`,
+        short_url: getShorUrl(req,cached.short_code),
         short_code: cached.short_code,
         expired_at: ttlCalculation(strToDate(short_code_cached.createdAt)),
         count : short_code_cached.count || 0
@@ -45,7 +46,7 @@ export const shortUrl = async (req:Request, res:Response) => {
       //returning the value if url exists
       return res.status(201).json({
         long_url:longUrl,
-        short_url:`https//api.shortly.com/${urlExists.short_code}`,
+        short_url:getShorUrl(req,urlExists.short_code),
         short_code:urlExists.short_code,
         expired_at:ttlCalculation(urlExists.created_at),
         count: 0
@@ -81,7 +82,7 @@ export const shortUrl = async (req:Request, res:Response) => {
 
     res.status(201).json({
       long_url:longUrl,
-      short_url:`https//api.shortly.com/${encodedId}`,
+      short_url:getShorUrl(req,encodedId),
       short_code:encodedId,
       expired_at:ttlCalculation(urlDb.created_at),
       count:0

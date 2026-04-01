@@ -11,4 +11,4 @@ ENV PORT=5000
 EXPOSE 5000
 RUN npm install -g ts-node typescript nodemon
 RUN npm run build
-CMD ["npm", "start"]
+CMD ["node", "dist/index.js"]

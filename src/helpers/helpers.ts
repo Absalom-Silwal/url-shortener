@@ -51,3 +51,13 @@ export const ttlCalculation = (createdAt:Date,ttlYear=3)=>{
 export const strToDate = (date:string)=>{
   return new Date(date);
 }
+
+import {Request} from "express"
+export const getBaseUrl = (req:Request)=>{
+  return req.protocol + '://' + req.get('host');
+}
+
+export const getShorUrl = (req:Request,shortCode:string) => {
+  const baseUrl = getBaseUrl(req);
+  return `${baseUrl}/api/v1/code/${shortCode}`
+}
