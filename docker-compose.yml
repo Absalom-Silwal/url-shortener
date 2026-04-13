@@ -7,6 +7,7 @@ services:
       dockerfile: dockerfile
     image: ghcr.io/absalom-silwal/app.shortly
     container_name: url-shortner
+    command: npx ts-node src/index.ts
     ports:
       - "5000:5000"
     environment:

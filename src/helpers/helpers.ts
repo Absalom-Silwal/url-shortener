@@ -61,3 +61,20 @@ export const getShorUrl = (req:Request,shortCode:string) => {
   const baseUrl = getBaseUrl(req);
   return `${baseUrl}/api/v1/code/${shortCode}`
 }
+
+// Helper to ensure URL is absolute for redirection
+export const ensureAbsoluteUrl = (url: string) => {
+  if (!/^https?:\/\//i.test(url)) {
+    return `https://${url}`;
+  }
+  return url;
+};
+
+// Normalize URL for consistent keys/storage
+export const normalizeUrl = (url: string) => {
+  let normalized = url.trim();
+  if (normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
+  }
+  return normalized.toLowerCase();
+};
