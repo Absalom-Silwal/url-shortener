@@ -1,6 +1,4 @@
 import Url from "../models/url.model";
-import bs58 from "bs58";
-import { createClient } from "redis";
 import {Request,Response} from "express"
 import { createSnowflake,
         Base62,
@@ -25,13 +23,12 @@ export const shortUrl = async (req:Request, res:Response) => {
     }
     
     const longUrl = normalizeUrl(rawLongUrl);
-    const baseUrl = getBaseUrl(req);
 
     //first checking long url exists or not on redis
     const cached = await readFromCache(`long:${longUrl}`);
     if (cached) {
       const short_code_cached = await readFromCache(`short:${cached.short_code}`)
-      console.log(`Found in cache: long:${longUrl} -> ${cached.short_code}`);
+      //console.log(`Found in cache: long:${longUrl} -> ${cached.short_code}`);
       
       return res.status(200).json({
         long_url: longUrl,
@@ -117,21 +114,18 @@ export const shortUrl = async (req:Request, res:Response) => {
 
 export const redirectUrl = async (req: Request, res: Response) => {
   try {
-      //for removing cors
-      res.removeHeader("Access-Control-Allow-Origin");
-      res.removeHeader("Access-Control-Allow-Headers");
-      res.removeHeader("Access-Control-Allow-Methods");
+    //removing cors for redirection
+    res.removeHeader("Access-Control-Allow-Origin");
+    res.removeHeader("Access-Control-Allow-Headers");
+    res.removeHeader("Access-Control-Allow-Methods");
     const reqCode = req.params.code;
     const shortCode = Array.isArray(reqCode) ? reqCode[0] : reqCode;
-    console.log(`Redirecting for code: ${shortCode}`);
     
     let cachedUrl = await readFromCache(`short:${shortCode}`);
 
     if (!cachedUrl) {
-      console.log(`Cache miss for short:${shortCode}, checking database...`);
       const url = await Url.findOne({ short_code: shortCode });
       if (!url) {
-          console.log(`No record found for code: ${shortCode}`);
           return res.status(404).json({ message: "Url not found" });
       }
       
@@ -167,8 +161,7 @@ export const redirectUrl = async (req: Request, res: Response) => {
     
     // ENSURE REDIRECT TARGET IS ABSOLUTE
     finalLongUrl = ensureAbsoluteUrl(finalLongUrl);
-    
-    console.log(`Redirecting to: ${finalLongUrl} (Status 302)`);
+  
     res.redirect(302, finalLongUrl);
   } catch (error: unknown) {
     if (error instanceof Error) {

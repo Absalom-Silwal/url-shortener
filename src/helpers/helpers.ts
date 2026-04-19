@@ -73,7 +73,7 @@ export const ensureAbsoluteUrl = (url: string) => {
 // Normalize URL for consistent keys/storage
 export const normalizeUrl = (url: string) => {
   let normalized = url.trim();
-  if (normalized.endsWith('/')) {
+  if (normalized.endsWith('/') || normalized.endsWith('\\'))  {
     normalized = normalized.slice(0, -1);
   }
   return normalized.toLowerCase();
