@@ -7,9 +7,11 @@ import { createSnowflake,
         getBaseUrl,
         getShorUrl,
         ensureAbsoluteUrl,
-        normalizeUrl 
+        normalizeUrl,
+        getStartOfWeek,
+        getEndOfWeek 
       } from "../helpers/helpers";
-import { readFromCache,writeToCache } from "../helpers/redis";
+import { readFromCache,writeToCache,readMultipleKeysFromCache,getMultipleValuesFromCache } from "../helpers/redis";
 
 
 
@@ -17,12 +19,13 @@ import { readFromCache,writeToCache } from "../helpers/redis";
 // shorten Url
 export const shortUrl = async (req:Request, res:Response) => {
   try {
-    const {longUrl: rawLongUrl} = req.body;
-    if (!rawLongUrl) {
+    const {url} = req.body;
+    console.log(url)
+    if (!url) {
         return res.status(400).json({ error: "longUrl is required" });
     }
     
-    const longUrl = normalizeUrl(rawLongUrl);
+    const longUrl = normalizeUrl(url);
 
     //first checking long url exists or not on redis
     const cached = await readFromCache(`long:${longUrl}`);
@@ -182,3 +185,50 @@ export const deleteUrl = async (req:Request, res:Response) => {
     }
   }
 };
+
+export const analytics = async(req:Request,res:Response) => {
+  const keys = await readMultipleKeysFromCache("short:*")
+  const flatKeys = keys.flat()
+  const values = await getMultipleValuesFromCache(flatKeys)
+  const totalLinks = values.length;
+
+  const totalClicks = values.reduce((sum, item) => sum + (item.count ?? 0), 0);
+
+  const avgClicks = totalLinks > 0 ? totalClicks / totalLinks : 0;
+  const start = getStartOfWeek();
+  const end = getEndOfWeek(start);
+  const clicksByDay: Record<string, number> = {
+    sunday: 0,
+    monday: 0,
+    tuesday: 0,
+    wednesday: 0,
+    thursday: 0,
+    friday: 0,
+    saturday: 0
+  };
+  values.forEach(item => {
+      const created = new Date(item.createdAt);
+
+      if (created >= start && created <= end) {
+          const day = created.getDay(); // 0–6
+          const map = [
+              "sunday",
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+              "saturday"
+          ];
+
+          clicksByDay[map[day]] += item.count ?? 0;
+      }
+  });
+  const stats = {
+    totalLinks,
+    totalClicks,
+    avgClicks,
+    clicksThisWeek: clicksByDay
+  };
+  res.status(200).json({'analytics':stats})
+}

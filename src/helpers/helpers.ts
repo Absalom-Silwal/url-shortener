@@ -78,3 +78,18 @@ export const normalizeUrl = (url: string) => {
   }
   return normalized.toLowerCase();
 };
+
+export const getStartOfWeek =(date = new Date()) => {
+    const d = new Date(date);
+    const day = d.getDay(); // 0 = Sunday
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - day);
+    return d;
+}
+
+export const getEndOfWeek = (start: Date) => {
+    const d = new Date(start);
+    d.setDate(d.getDate() + 6);
+    d.setHours(23, 59, 59, 999);
+    return d;
+}
