@@ -232,3 +232,12 @@ export const analytics = async(req:Request,res:Response) => {
   };
   res.status(200).json({'analytics':stats})
 }
+
+export const latestUrls = async(req:Request,res:Response) => {
+  try {
+    const latestUrls = await Url.find().sort({ createdAt: -1 }).limit(10);  
+    res.status(200).json({ latestUrls });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch latest URLs" });
+  }
+};

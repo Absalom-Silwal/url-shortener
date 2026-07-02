@@ -6,10 +6,10 @@ dotenv.config();
 
 
 let redisClient = createClient({
-  url: process.env.REDIS_URL || "redis://redis:6379"
+  url: process.env.REDIS_URL || "redis://redis:6380"
 });
 
-if (process.env.NODE_ENV !== "ut") {
+if (process.env.NODE_ENV !== "test") {
   //redis connection
   redisClient.connect().then(result=>{
       console.log('redis connected sucessfully')
