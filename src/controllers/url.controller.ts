@@ -20,7 +20,6 @@ import { readFromCache,writeToCache,readMultipleKeysFromCache,getMultipleValuesF
 export const shortUrl = async (req:Request, res:Response) => {
   try {
     const {url} = req.body;
-    console.log(url)
     if (!url) {
         return res.status(400).json({ error: "longUrl is required" });
     }
@@ -45,7 +44,6 @@ export const shortUrl = async (req:Request, res:Response) => {
     //Search if the url exists or not in the database
     const urlExists = await Url.findOne({long_url:longUrl});
     if(urlExists){
-      console.log(`Found in DB: ${longUrl} -> ${urlExists.short_code}`);
       //cache it to redis for next time
       const createdAt = (urlExists as any).created_at || (urlExists as any).createdAt;
       
@@ -235,7 +233,16 @@ export const analytics = async(req:Request,res:Response) => {
 
 export const latestUrls = async(req:Request,res:Response) => {
   try {
-    const latestUrls = await Url.find().sort({ createdAt: -1 }).limit(10);  
+    const latestUrls = await Url.aggregate([
+      {
+        $project: {
+          long_url: 1,
+          short_code: 1,
+          short_url: { $concat: [getBaseUrl(req), "/api/v1/code/", "$short_code"] },
+          createdAt: 1
+        }
+      }
+    ]).sort({ createdAt: -1 }).limit(10);
     res.status(200).json({ latestUrls });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch latest URLs" });

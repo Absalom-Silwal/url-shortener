@@ -23,13 +23,11 @@ export async function readMultipleKeysFromCache(pattern:string){
         MATCH: pattern,
         COUNT: 500
     })) {
-        console.log('keuy',key)
         if(key){
             keys.push(key);
         }
         
     }
-    console.log('keys',keys)
     return keys
 }
 
@@ -46,7 +44,6 @@ export async function getMultipleValuesFromCache(keys:string[]){
         }
         if (typeof result === "string") {
              try {
-            
                 return JSON.parse(result);
             } catch {
                 return result;
