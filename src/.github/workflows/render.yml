@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  push:
+    branches: main
+
+jobs:
+  login:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to GitHub
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.ACCESS_TOKEN}}
+      - 
+        name: Build Docker Image
+        scripts: | 
+          docker build -t ghcr.io/absalom-silwal/app.shortly:latest .
+          docker push ghcr.io/absalom-silwal/app.shortly:latest
