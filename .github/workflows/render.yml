@@ -30,3 +30,7 @@ jobs:
         name: Push Docker Image
         run: |
           docker push ghcr.io/absalom-silwal/app.shortly:latest
+      -
+        name: Deploy to render
+        run: |
+          curl {{secrets.RENDER_DEPLOY_HOOK }}
