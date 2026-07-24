@@ -15,8 +15,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.ACCESS_TOKEN}}
-      - 
-        name: Build Docker Image
-        scripts: | 
-          docker build -t ghcr.io/absalom-silwal/app.shortly:latest .
-          docker push ghcr.io/absalom-silwal/app.shortly:latest
+          script: | 
+            docker build -t ghcr.io/absalom-silwal/app.shortly:latest .
+            docker push ghcr.io/absalom-silwal/app.shortly:latest
